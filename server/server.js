@@ -69,6 +69,7 @@ io.use((socket, next) => {
 });
 
 io.on('connection', (socket) => {
+    console.log('New client connected:', socket.id); // Add this log
     console.log('New client connected');
 
     socket.on('message', async (data) => {

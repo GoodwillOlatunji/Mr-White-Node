@@ -1,24 +1,167 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat Interface</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    IT WORKSSSSSSS!!!
-    <div id="chat-container">
-        <div class="chat-header">
-            Chat with Us!
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>MrWhite</title>
+        <link rel="stylesheet" href="./assets/css/styles.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    </head>
+    
+    <body>
+        <section class="body">
+            <nav class="nav">
+                <div class="logo">
+                    <h1 ><a href="index.html">MrWhite</a></h1>
+                </div>
+                <div class="menu">
+                    <ul>
+                        <li><a href="#">Features</a></li>
+                        <li class="dropdown">
+                            <a href="./about.html" class="droplink">About <i class="fa-solid fa-chevron-down"></i></a>
+                            <ul class="dropdown-content">
+                                <li><a href="#">Project</a></li>
+                                <li><a href="#">Team</a></li>
+                                <li><a href="#">Contact</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">Contact</a></li>
+                        <li><a href="#">Learn</a></li>
+                    </ul>
+                </div>
+                <div class="cta btn">
+                    <a href="#" role="button" > <i class="fa-solid fa-wand-magic-sparkles"></i> Get extension</a>
+                </div>
+            </nav>
+
+            <section class="landing-page">
+                <video autoplay muted loop id="background-video">
+                    <source src="./assets/Images/1g8IkhtJmlWcC4zEYWKUmeGWzI.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div class="landing-text">
+                    <div class="mrwhite-img animate-on-scroll zoom-in">
+                        <img src="./assets/Images/Designer (2).jpeg" alt="">
+                    </div>
+                    <h1 class="animate-on-scroll fade-in-up">Powerful Ai chat bot <br> <span class="white">Mr White</span></h1>
+                    <p class="animate-on-scroll fade-in-up delay-200">Protect yourself from phishing and cyber threats with our powerful extension. Stay safe online with cutting-edge security.</p>
+                    <div class="cta animate-on-scroll fade-in-up delay-400">
+                        <a href="#" role="button" class="btn"> <i class="fa-solid fa-wand-magic-sparkles"></i> Get extension</a>
+                        <a href="#" role="button" class="btn"> <i class="fa-solid fa-ellipsis"></i> Learn more </a>
+                    </div>
+                    <div class="social-links animate-on-scroll fade-in-up delay-600">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Testimonial Section -->
+            <section class="testimonial">
+                <div class="testimonial-content">
+                    <div class="testimonial-header animate-on-scroll fade-in-up">
+                        <i class="fa-solid fa-star"></i> INTRODUCING <span class="highlight">MRWHITE</span>
+                    </div>
+                    <blockquote class="animate-on-scroll fade-in-up delay-200">
+                        "MrWhite is a cybersecurity chatbot. <span class="highlight">We protect your data</span> and ensure your online safety. <span class="highlight">Stay secure</span> with our advanced AI technology."
+                    </blockquote>
+                    <div class="testimonial-author animate-on-scroll fade-in-up delay-400">
+                        <img src="./assets/Images/c0749b7cc401421662ae901ec8f9f660.jpg" alt="Author">
+                        <span>Stellar six Capstone Project. by SAIT</span>
+                    </div>
+                </div>
+                <br>
+                <br>
+                
+            </section>
+
+            <!-- New Section -->
+            <section class="cybersecurity-chat-extension">
+                <div class="container">
+                    <h2 class="animate-on-scroll fade-in-up">CYBERSECURITY CHAT EXTENSION</h2>
+                    <p class="animate-on-scroll fade-in-up delay-200">Enhancing your security with real-time assistance and intelligent threat detection.</p>
+                    <br>
+                    <br>
+                    <br>
+                    <div class="features">
+                        <div class="feature animate-on-scroll ">
+                            <h3>INTERACTIVE CYBERSECURITY CHAT</h3>
+                            <p>Engage with an AI-powered chatbot that answers cybersecurity-related queries directly on the extension.</p>
+                        </div>
+                        <div class="feature animate-on-scroll ">
+                            <h3>PHISHING DETECTION</h3>
+                            <p>Detects suspicious links and warns users about potential phishing attempts in real time.</p>
+                        </div>
+                        <div class="feature animate-on-scroll ">
+                            <h3>SECURITY INSIGHTS</h3>
+                            <p>Provides real-time security updates and best practices to keep your data safe.</p>
+                        </div>
+                    </div>
+                    <div class="chat-button animate-on-scroll zoom-in delay-600">
+                        <a href="#" class="btn">Get the Extension!<i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </section>
+
+             
+            <!-- Footer Section -->
+            <footer class="footer">
+                <div class="container">
+                    <div class="footer-content">
+                        <div class="footer-logo">
+                            <h2>MrWhite</h2>
+                        </div>
+                        <div class="footer-links">
+                            <a href="#">Features</a>
+                            <a href="#">About</a>
+                            <a href="#">Pricing</a>
+                            <a href="#">Contact</a>
+                            <a href="#">Learn</a>
+                        </div>
+                        <div class="footer-social">
+                            <a href="#"><i class="fab fa-facebook"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-linkedin"></i></a>
+                        </div>
+                    </div>
+                    <div class="footer-bottom">
+                        <p>&copy; 2025 MrWhite. All rights reserved.</p>
+                    </div>
+                </div>
+            </footer>
+        </section>
+
+        <!-- Chat Box -->
+
+        <div class="chat-box" id="chat-box">
+            <div class="chat-header">
+                <span>Chat with MrWhite</span>
+                <div class="chat-controls">
+                    <button id="minimize-chat"><i class="fa-solid fa-minus"></i></button>
+                    <button id="maximize-chat"><i class="fa-solid fa-expand"></i></button>
+                    <button id="close-chat"><i class="fa-solid fa-times"></i></button>
+                </div>
+            </div>
+            <div class="chat-content">
+                <div class="messages">
+                    <!-- Messages will go here -->
+                </div>
+                <div class="chat-input">
+                    <input type="text" placeholder="Type your message..." id="message" />
+                    <button onclick="sendMessage(event)"><i class="fa-solid fa-paper-plane"></i></button>
+                </div>
+            </div>
         </div>
-        <div id="chat-box"></div>
-        <div class="input-box">
-            <input type="text" id="message" placeholder="Type your message...">
-            <button id="send-button">Send</button>
-        </div>
-    </div>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="script.js"></script>
-</body>
+        <button class="chat-toggle" id="chat-toggle" onclick="toggleChat()">
+            <i class="fa-solid fa-comments"></i> Chat
+        </button>
+        <!-- Add these before closing body tag -->
+        <script src="http://localhost:5000/socket.io/socket.io.js"></script>
+        <script src="./assets/js/chat.js"></script>
+        <script src="./assets/js/script.js"></script>
+    </body>
 </html>
