@@ -1,194 +1,92 @@
-import express from 'express';
-import http from 'http';
-import { Server } from 'socket.io';
-import { spawn } from 'child_process';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import dotenv from 'dotenv';
-import cors from 'cors';
-import rateLimit from 'express-rate-limit';
-
-// Load environment variables
-dotenv.config();
-
-// Define __dirname manually for ES Modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const express = require('express');
+const cors = require('cors');
+const path = require('path');
+const fetch = require('node-fetch');
 
 const app = express();
-const server = http.createServer(app);
+const PORT = process.env.PORT || 8080;
 
-// Security middleware
-app.use(cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:5000',
-    credentials: true
-}));
+console.log('[Mr. White] Server initializing...');
 
-// Rate limiting
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100 // limit each IP to 100 requests per windowMs
-});
-app.use(limiter);
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use(express.static(path.join(__dirname, './public')));
 
-// Configure Socket.IO with CORS and security
-const io = new Server(server, {
-    cors: {
-        origin: process.env.CLIENT_URL || 'http://localhost:5000',
-        methods: ["GET", "POST"],
-        credentials: true
-    },
-    pingTimeout: 60000,
-    pingInterval: 25000,
-    transports: ['websocket', 'polling']
-});
+console.log('[Mr. White] Middleware initialized');
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send('Something broke!');
-});
-
-// Serve static files from the 'public' directory
-app.use(express.static(path.join(__dirname, '../public')));
-
-// Health check endpoint
-app.get('/health', (req, res) => {
-    res.status(200).json({ status: 'ok' });
-});
-
-// Main route
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../public/index.html'));
-});
-
-// Socket.IO connection handling with authentication
-io.use((socket, next) => {
-    // Add authentication logic here if needed
-    next();
-});
-
-io.on('connection', (socket) => {
-    console.log('New client connected:', socket.id); // Add this log
-    console.log('New client connected');
-
-    socket.on('message', async (data) => {
-        try {
-            console.log('Message received:', data.message);
-            await runOllama(data.message, socket);
-        } catch (error) {
-            console.error('Error processing message:', error);
-            socket.emit('bot_response', { 
-                response: 'Sorry, I encountered an error processing your request.',
-                isComplete: true
-            });
-        }
-    });
-
-    socket.on('disconnect', () => {
-        console.log('Client disconnected');
-    });
-});
-
-async function runOllama(input, socket) {
-    return new Promise((resolve, reject) => {
-        // Use the full path to ollama
-        const ollamaPath = 'C:\\Users\\Goodwill\\AppData\\Local\\Programs\\ollama\\ollama.exe';
-        let model = 'codellama:latest';
-        const args = ['run', model, input];
-        console.log('Executing command:', ollamaPath, args.join(' '));
+// API Routes
+app.post('/api/connect', async (req, res) => {
+    console.log('[Mr. White] Connection request received');
+    try {
+        const { model } = req.body;
+        console.log(`[Mr. White] Connecting to Ollama with model: ${model}`);
         
-        // Create the process
-        const childProcess = spawn(ollamaPath, args, {
-            env: process.env,
-            shell: true,
-            stdio: ['pipe', 'pipe', 'pipe']
-        });
-
-        let output = '';
-        let errorOutput = '';
-        let isComplete = false;
-        let lastResponseTime = Date.now();
-
-        // Handle stdout
-        childProcess.stdout.on('data', (data) => {
-            const chunk = data.toString();
-            output += chunk;
-            lastResponseTime = Date.now();
-            console.log('Received chunk:', chunk);
-            // Send each chunk to the client
-            socket.emit('bot_response', { 
-                response: chunk,
-                isComplete: false
-            });
-        });
-
-        // Handle stderr
-        childProcess.stderr.on('data', (data) => {
-            const chunk = data.toString();
-            // Only log non-spinner characters
-            if (!chunk.match(/[⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏]/)) {
-                errorOutput += chunk;
-                console.error('=>', chunk);
-            }
-        });
-
-        // Check for completion periodically
-        const checkCompletion = setInterval(() => {
-            const now = Date.now();
-            // If we haven't received data for 2 seconds, consider it complete
-            if (now - lastResponseTime > 2000 && output.length > 0) {
-                isComplete = true;
-                clearInterval(checkCompletion);
-                childProcess.kill();
-                // Send completion signal
-                socket.emit('bot_response', { 
-                    response: '',
-                    isComplete: true
-                });
-                resolve(output.trim());
-            }
-        }, 1000);
-
-        // Handle process completion
-        childProcess.on('close', (code) => {
-            clearInterval(checkCompletion);
-            isComplete = true;
-            if (code !== 0) {
-                reject(new Error(`Process exited with code ${code}: ${errorOutput}`));
-            } else {
-                // Send completion signal
-                socket.emit('bot_response', { 
-                    response: '',
-                    isComplete: true
-                });
-                resolve(output.trim());
-            }
-        });
-
-        // Handle process errors
-        childProcess.on('error', (err) => {
-            clearInterval(checkCompletion);
-            console.error('Process error:', err);
-            reject(err);
-        });
-
-        // Add timeout to prevent hanging
-        setTimeout(() => {
-            if (!isComplete) {
-                clearInterval(checkCompletion);
-                childProcess.kill();
-                console.log('Response not complete');
-                reject(new Error('Responce =>'));
-            }
-            else {
-                console.log('Response complete');
-            }
-        }, 100); // 60 second timeout
-    });
-}
-
-const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+        // Check if Ollama is running
+        console.log('[Mr. White] Verifying Ollama status...');
+        const response = await fetch('http://localhost:11434/api/tags');
+        if (!response.ok) {
+            console.error('[Mr. White] Ollama service not available');
+            throw new Error('Ollama is not running');
+        }
+        
+        console.log('[Mr. White] Connection established');
+        res.json({ success: true, model });
+    } catch (error) {
+        console.error('[Mr. White] Connection error:', error.message);
+        res.status(500).json({ error: error.message });
+    }
 });
+
+app.post('/api/chat', async (req, res) => {
+    console.log('[Mr. White] Chat request received');
+    try {
+        const { model, messages } = req.body;
+        console.log(`[Mr. White] Processing chat with model: ${model}`);
+        console.log(`[Mr. White] Message count: ${messages.length}`);
+        
+        // Log the last user message
+        const lastUserMessage = messages[messages.length - 1];
+        console.log('[Mr. White] User message:', lastUserMessage.content);
+        
+        console.log('[Mr. White] Sending request to Ollama API...');
+        const response = await fetch('http://localhost:11434/api/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                model,
+                messages,
+                stream: false
+            })
+        });
+        
+        if (!response.ok) {
+            console.error(`[Mr. White] API Error: ${response.status}`);
+            throw new Error(`Ollama API Error: ${response.status}`);
+        }
+        
+        console.log('[Mr. White] Response received');
+        const data = await response.json();
+        
+        // Log the AI response
+        console.log('[Mr. White] AI Response:', data.message.content);
+        
+        res.json(data);
+    } catch (error) {
+        console.error('[Mr. White] Chat error:', error.message);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Start server
+app.listen(PORT, () => {
+    console.log(`[Mr. White] Server running on http://localhost:${PORT}`);
+    console.log('[Mr. White] Serving static files from:', path.join(__dirname, './public'));
+});
+
+// const DEFAULT_MODEL = 'codellama:latest';
+// const DEFAULT_OLLAMA_PATH = 'C:\\Users\\Goodwill\\AppData\\Local\\Programs\\ollama\\ollama.exe'; 
+
+
